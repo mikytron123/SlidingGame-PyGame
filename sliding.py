@@ -4,7 +4,7 @@ from pygame.locals import *
 import sys
 import random
 SQUARESIZE = 100
-m,n = 5,5
+m,n = 2,2
 HEIGHT=SQUARESIZE *m
 WIDTH=SQUARESIZE *n
 board = np.arange(1,m*n+1,1)
@@ -137,7 +137,18 @@ class SlidingGame:
                     self.drawboard()
                     pygame.display.update()
 
-#                state = checkwin(self.board)
+                state = self.checkwin()
+                if state:
+                    # If game over is true, draw game over
+                    text = self.font.render("Game Over", True, (255,255,255))
+                    text_rect = text.get_rect()
+                    text_x = self.screen.get_width() / 2 - text_rect.width / 2
+                    text_y = self.screen.get_height() / 2 - text_rect.height / 2
+                    self.screen.fill((0,0,0))
+                    self.screen.blit(text, [text_x, text_y])
+                    pygame.display.update()
+                    pygame.time.wait(1000)
+                    running = False
 
     def randomize(self):
         direcs = ["N","S","W","E"]
