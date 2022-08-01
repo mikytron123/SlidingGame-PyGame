@@ -1,10 +1,19 @@
+from typing import Tuple
 import numpy as np
 import pygame
 from pygame.locals import *
 import sys
 import random
+from enum import Enum
+
+class Direction(Enum):
+    East="E"
+    West="W"
+    North="N"
+    South="S"
+    
 SQUARESIZE = 100
-m,n = 2,2
+m,n = 3,3
 HEIGHT=SQUARESIZE *m
 WIDTH=SQUARESIZE *n
 board = np.arange(1,m*n+1,1)
@@ -12,8 +21,9 @@ board.resize((m,n))
 
 
 class SlidingGame:
-    def __init__(self,board):
-        self.board = board 
+    def __init__(self,board:np.ndarray):
+        self.board = board
+         
     
     def rotationA(self,pointA,pointB,pointC,dir):
         q = pointC[1] - pointB[1]
@@ -21,33 +31,33 @@ class SlidingGame:
         p = abs(pointB[0] - pointA[0])
         c = pointA[1]
         if dir == "CW":
-            self.board = self.moveboard(pointB,"W",-q)
+            self.board = self.moveboard(pointB,Direction.West,-q)
             pygame.time.wait(500)
             self.drawboard()
             pygame.display.update()
-            self.board = self.moveboard(pointB,"S",p)
+            self.board = self.moveboard(pointB,Direction.South,p)
             pygame.time.wait(500)
             self.drawboard()
             pygame.display.update()
-            self.board = self.moveboard(pointB,"E",q)
+            self.board = self.moveboard(pointB,Direction.East,q)
             pygame.time.wait(500)
             self.drawboard()
             pygame.display.update()
-            self.board = self.moveboard(pointB,"N",-p)
+            self.board = self.moveboard(pointB,Direction.North,-p)
             pygame.time.wait(500)
             self.drawboard()
             pygame.display.update()
         elif dir == "CCW":
-            self.board = self.moveboard(pointB,"S",p)
+            self.board = self.moveboard(pointB,Direction.South,p)
             self.drawboard()
             pygame.display.update()
-            self.board = self.moveboard(pointB,"W",-q)
+            self.board = self.moveboard(pointB,Direction.West,-q)
             self.drawboard()
             pygame.display.update()
-            self.board = self.moveboard(pointB,"N",-p)
+            self.board = self.moveboard(pointB,Direction.North,-p)
             self.drawboard()
             pygame.display.update()
-            self.board = self.moveboard(pointB,"E",q)
+            self.board = self.moveboard(pointB,Direction.East,q)
             self.drawboard()
             pygame.display.update()
         return self.board
@@ -59,33 +69,33 @@ class SlidingGame:
         p = abs(pointC[0] - pointA[0])
         c = pointA[1]
         if dir == "CW":
-            self.board = self.moveboard(pointA,"N",-p)
+            self.board = self.moveboard(pointA,Direction.North,-p)
             pygame.time.wait(1000)
             self.drawboard()
             pygame.display.update()
-            self.board = self.moveboard(pointA,"W",-q)
+            self.board = self.moveboard(pointA,Direction.West,-q)
             pygame.time.wait(1000)
             self.drawboard()
             pygame.display.update()
-            self.board = self.moveboard(pointA,"S",p)
+            self.board = self.moveboard(pointA,Direction.South,p)
             pygame.time.wait(1000)
             self.drawboard()
             pygame.display.update()
-            self.board = self.moveboard(pointA,"E",q)
+            self.board = self.moveboard(pointA,Direction.East,q)
             pygame.time.wait(1000)
             self.drawboard()
             pygame.display.update()
         elif dir == "CCW":
-            self.board = self.moveboard(pointA,"S",p)
+            self.board = self.moveboard(pointA,Direction.South,p)
             self.drawboard()
             pygame.display.update()
-            self.board = self.moveboard(pointA,"W",-q)
+            self.board = self.moveboard(pointA,Direction.West,-q)
             self.drawboard()
             pygame.display.update()
-            self.board = self.moveboard(pointA,"N",-p)
+            self.board = self.moveboard(pointA,Direction.North,-p)
             self.drawboard()
             pygame.display.update()
-            self.board = self.moveboard(pointA,"E",q)
+            self.board = self.moveboard(pointA,Direction.East,q)
             self.drawboard()
             pygame.display.update()
         return self.board
@@ -106,6 +116,8 @@ class SlidingGame:
                 #self.screen.fill((0,0,0))
                 if event.type == pygame.QUIT:
                     running = False
+                    pygame.display.quit()
+                    pygame.quit()
                     sys.exit()
                 
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -117,16 +129,16 @@ class SlidingGame:
                     deltax = elem2x-elemx
                     deltay = elem2y - elemy
                     if deltax > 0:
-                        direc = 'E'
+                        direc = Direction.East
                         amount = deltax
                     elif deltax < 0:
-                        direc = 'W'
+                        direc = Direction.West
                         amount = deltax
                     elif deltay < 0:
-                        direc = 'N'
+                        direc = Direction.North
                         amount = deltay
                     elif deltay > 0:
-                        direc = 'S'
+                        direc = Direction.South
                         amount = deltay
                     moved = True
                 if moved:
@@ -151,7 +163,7 @@ class SlidingGame:
                     running = False
 
     def randomize(self):
-        direcs = ["N","S","W","E"]
+        direcs = list(Direction)
         for i in range(100):
             randx = random.randint(0,m-1)
             randy = random.randint(0,n-1)
@@ -162,7 +174,7 @@ class SlidingGame:
         return self.board
         
 
-    def checkwin(self):
+    def checkwin(self) -> bool:
         size = self.board.size
         solved = np.arange(1,size+1,1)
         solved.resize(self.board.shape)
@@ -182,15 +194,15 @@ class SlidingGame:
         
 
 
-    def moveboard(self,elem,direc,amount):
+    def moveboard(self,elem:Tuple[int,int],direc:Direction,amount:int):
         x,y = elem
-        if direc == "N":
+        if direc == Direction.North:
             self.board[:,y] = np.roll(self.board[:,y],amount)
-        if direc == "S":
+        if direc == Direction.South:
             self.board[:,y] = np.roll(self.board[:,y],amount)
-        if direc == "W":
+        if direc == Direction.West:
             self.board[x,:] = np.roll(self.board[x,:],amount)
-        if direc == "E":
+        if direc == Direction.East:
             self.board[x,:] = np.roll(self.board[x,:],amount)
         return self.board
         
