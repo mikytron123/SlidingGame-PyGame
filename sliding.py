@@ -11,7 +11,7 @@ class Direction(Enum):
     West="W"
     North="N"
     South="S"
-    
+
 SQUARESIZE = 100
 m,n = 3,3
 HEIGHT=SQUARESIZE *m
@@ -19,13 +19,14 @@ WIDTH=SQUARESIZE *n
 board = np.arange(1,m*n+1,1)
 board.resize((m,n))
 
+Point = Tuple[int,int]
 
 class SlidingGame:
     def __init__(self,board:np.ndarray):
         self.board = board
          
     
-    def rotationA(self,pointA,pointB,pointC,dir):
+    def rotationA(self,pointA:Point,pointB:Point,pointC:Point,dir:str):
         q = pointC[1] - pointB[1]
         r = pointB[0]
         p = abs(pointB[0] - pointA[0])
@@ -63,7 +64,7 @@ class SlidingGame:
         return self.board
 
 
-    def rotationB(self,pointA,pointB,pointC,dir):
+    def rotationB(self,pointA:Point,pointB:Point,pointC:Point,dir:str):
         q = pointB[1] - pointA[1]
         r = pointB[0]
         p = abs(pointC[0] - pointA[0])
@@ -107,13 +108,12 @@ class SlidingGame:
         self.screen = pygame.display.set_mode((WIDTH,HEIGHT))
         self.font = pygame.font.SysFont('arial',20)
 
-        self.board = self.randomize()
+        self.randomize()
         self.drawboard()
         pygame.display.update()
 
         while running:
             for event in pygame.event.get():
-                #self.screen.fill((0,0,0))
                 if event.type == pygame.QUIT:
                     running = False
                     pygame.display.quit()
@@ -121,13 +121,14 @@ class SlidingGame:
                     sys.exit()
                 
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    elem = event.pos[0]//SQUARESIZE,event.pos[1]//SQUARESIZE
-                    elemx,elemy = elem
+                    elemx,elemy = event.pos[0]//SQUARESIZE,event.pos[1]//SQUARESIZE
+
                 if event.type == pygame.MOUSEBUTTONUP:
-                    elem2 = event.pos[0]//SQUARESIZE,event.pos[1]//SQUARESIZE
-                    elem2x,elem2y = elem2
+                    elem2x,elem2y = event.pos[0]//SQUARESIZE,event.pos[1]//SQUARESIZE
+
                     deltax = elem2x-elemx
                     deltay = elem2y - elemy
+
                     if deltax > 0:
                         direc = Direction.East
                         amount = deltax
@@ -140,11 +141,11 @@ class SlidingGame:
                     elif deltay > 0:
                         direc = Direction.South
                         amount = deltay
-                    moved = True
+                    moved = deltax!=0 or deltay!=0
                 if moved:
 
-                    elem = elem[1],elem[0]
-                    board = self.moveboard(elem,direc,amount)
+                    elem = elemy,elemx
+                    self.moveboard(elem,direc,amount)
                     moved=False
                     self.drawboard()
                     pygame.display.update()
@@ -170,8 +171,8 @@ class SlidingGame:
             direc = random.choice(direcs)
             amount = random.randint(1,m-1)
             elem = randx,randy
-            self.board = self.moveboard(elem,direc,amount)
-        return self.board
+            self.moveboard(elem,direc,amount)
+        
         
 
     def checkwin(self) -> bool:
@@ -204,7 +205,7 @@ class SlidingGame:
             self.board[x,:] = np.roll(self.board[x,:],amount)
         if direc == Direction.East:
             self.board[x,:] = np.roll(self.board[x,:],amount)
-        return self.board
+        
         
 if __name__ == "__main__":
 
