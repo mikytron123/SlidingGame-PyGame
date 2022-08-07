@@ -165,7 +165,7 @@ class SlidingGame:
 
     def randomize(self):
         direcs = list(Direction)
-        for i in range(100):
+        for _ in range(100):
             randx = random.randint(0,m-1)
             randy = random.randint(0,n-1)
             direc = random.choice(direcs)
@@ -176,6 +176,7 @@ class SlidingGame:
         
 
     def checkwin(self) -> bool:
+
         size = self.board.size
         solved = np.arange(1,size+1,1)
         solved.resize(self.board.shape)
@@ -195,7 +196,7 @@ class SlidingGame:
         
 
 
-    def moveboard(self,elem:Tuple[int,int],direc:Direction,amount:int):
+    def moveboard(self,elem:Point,direc:Direction,amount:int):
         x,y = elem
         if direc == Direction.North:
             self.board[:,y] = np.roll(self.board[:,y],amount)
