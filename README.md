@@ -69,7 +69,7 @@ python sliding.py
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[product-screenshot]: images/screenshot.png
+[product-screenshot]: ./Images/screenshot.png
 [Pygame-url]:https://www.pygame.org
 [Pygame.org]:https://img.shields.io/badge/Pygame-6?style=for-the-badge&logo=python&logoColor=3776AB
 [Numpy-url]:https://numpy.org/
