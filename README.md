@@ -38,6 +38,8 @@
 
 This project is built using numpy and Pygame. Numpy is used for storing internal state. 
 
+An autosolver algorithm is also implmented using solution from [How to Solve the Torus Puzzle](https://www.researchgate.net/publication/220654877_How_to_Solve_the_Torus_Puzzle)
+
 
 ### Built With
 
@@ -64,7 +66,9 @@ To get a local copy up and running follow these simple example steps.
 ```python
 python sliding.py
 ```
+A grid size must be entered before starting the game. 
 
+The autosolver can be invoked using the 's' key
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
