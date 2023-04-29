@@ -75,6 +75,6 @@ The autosolver can be invoked using the 's' key
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [product-screenshot]: ./Images/screenshot.png
 [Pygame-url]:https://www.pygame.org
-[Pygame.org]:https://img.shields.io/badge/Pygame-6?style=for-the-badge&logo=python&logoColor=3776AB
+[Pygame.org]:https://img.shields.io/badge/Pygame-black?style=for-the-badge&logo=python&logoColor=3776AB
 [Numpy-url]:https://numpy.org/
-[Numpy.org]:https://img.shields.io/badge/Numpy-6?style=for-the-badge&logo=Numpy&logoColor=013243
+[Numpy.org]:https://img.shields.io/badge/Numpy-black?style=for-the-badge&logo=Numpy&logoColor=013243
