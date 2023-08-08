@@ -3,7 +3,6 @@ from typing import Tuple
 
 import numpy as np
 import pygame
-from pygame.locals import *
 
 from board import Board, Direction
 
@@ -172,50 +171,40 @@ class SlidingGame:
             correctspot = [(r-1)//n, (r-1) % n]
             actualloc = self.board.where(r)
             if correctspot == actualloc:
-                print("same location")
                 continue
+
             elif actualloc[1] > correctspot[1]:
                 if actualloc[0] == correctspot[0]:
                     corner = [actualloc[0]+1, actualloc[1]]
-                    print(f"rotating {r} into place case 1")
                     self.rotationC(correctspot, actualloc, corner, "CCW")
                 elif actualloc[0] > correctspot[0]:
                     corner = [correctspot[0], actualloc[1]]
-                    print(f"rotating {r} into place case 2")
                     self.rotationC(correctspot, corner, actualloc, "CW")
             elif actualloc[1] < correctspot[1]:
                 if actualloc[0] > correctspot[0]:
-                    print(f"rotating {r} into place case 3")
                     corner = [actualloc[0], correctspot[1]]
                     self.rotationD(correctspot, actualloc, corner, "CW")
             elif actualloc[1] == correctspot[1]:
                 if actualloc[1] == n-1:
                     corner = [actualloc[0], actualloc[1]-1]
-                    print(f"rotating {r} into place case 4")
                     self.rotationD(correctspot, corner, actualloc, "CCW")
                 elif actualloc[1] >= 0:
                     corner = [actualloc[0], actualloc[1]+1]
-                    print(f"rotating {r} into place case 5")
                     self.rotationA(correctspot, actualloc, corner, "CW")
 
         for r in range(n*n-n+1, n*n-1, 1):
             correctspot = [(r-1)//n, (r-1) % n]
             actualloc = self.board.where(r)
             if correctspot == actualloc:
-                print("same location")
                 continue
             if actualloc[1] == correctspot[1]+1:
-
-                print(f"moving {r} into place case 1")
                 pointC = [correctspot[0], actualloc[1]+1]
                 self.tw(correctspot, actualloc, pointC, "W")
             elif actualloc[1] - correctspot[1] > 1:
-                print(f"moving {r} into place case 2")
                 pointC = [correctspot[0], correctspot[1]+1]
                 self.tw(correctspot, pointC, actualloc, "E")
 
         self.checkwin()
-        print("swapping last two pieces")
         # swap last two pieces
         for i in range(n-2, -2, -2):
             self.tw([n-1, i-1], [n-1, i], [n-1, i+1], "E")
@@ -290,7 +279,8 @@ class SlidingGame:
         for x in range(n):
             for y in range(n):
                 pygame.draw.rect(self.screen, (255, 255, 255),
-                                 [x*SQUARESIZE, y*SQUARESIZE, SQUARESIZE, SQUARESIZE], 3)
+                                 [x*SQUARESIZE, y*SQUARESIZE, SQUARESIZE, SQUARESIZE],
+                                   3)
                 numtxt = str(self.board.board[y][x])
                 img = self.font.render(numtxt, True, (255, 255, 255))
                 posx, posy = int(x*SQUARESIZE + SQUARESIZE //
