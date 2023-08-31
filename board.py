@@ -72,7 +72,7 @@ class Board:
         #         C
         #
 
-        q = pointB[1]-pointA[1]
+        q = pointB[1] - pointA[1]
         p = pointC[0] - pointB[0]
         if dir == "CW":
             self.moveboard(pointA, Direction.East, q)
@@ -106,7 +106,7 @@ class Board:
             self.moveboard(pointA, Direction.North, p)
 
     def tw(self, pointA: Point, pointB: Point, pointC: Point, dir: str):
-        corner = [pointB[0]-1, pointB[1]]
+        corner = [pointB[0] - 1, pointB[1]]
         if dir == "W":
             self.rotationD(corner, pointA, pointB, "CW")
             self.rotationA(corner, pointB, pointC, "CW")
@@ -118,10 +118,10 @@ class Board:
         direcs = list(Direction)
         n = self.board.shape[0]
         for _ in range(100):
-            randx = random.randint(0, n-1)
-            randy = random.randint(0, n-1)
+            randx = random.randint(0, n - 1)
+            randy = random.randint(0, n - 1)
             direc = random.choice(direcs)
-            amount = random.randint(1, n-1)
+            amount = random.randint(1, n - 1)
             elem = randx, randy
             self.moveboard(elem, direc, amount)
 

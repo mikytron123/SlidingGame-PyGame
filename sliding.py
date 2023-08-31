@@ -14,6 +14,7 @@ WIDTH = SQUARESIZE * n
 
 Point = Tuple[int, int]
 
+
 class SlidingGame:
     def __init__(self, board: np.ndarray):
         self.board = Board(board)
@@ -61,7 +62,6 @@ class SlidingGame:
         q = pointB[1] - pointA[1]
         p = abs(pointC[0] - pointA[0])
         if dir == "CW":
-
             self.moveboard(pointA, Direction.North, p)
             self.drawboard(200)
             self.moveboard(pointA, Direction.West, q)
@@ -72,7 +72,6 @@ class SlidingGame:
             self.drawboard(200)
 
         elif dir == "CCW":
-
             self.moveboard(pointA, Direction.West, q)
             self.drawboard(200)
             self.moveboard(pointA, Direction.North, p)
@@ -90,10 +89,9 @@ class SlidingGame:
         #         C
         #
 
-        q = pointB[1]-pointA[1]
+        q = pointB[1] - pointA[1]
         p = pointC[0] - pointB[0]
         if dir == "CW":
-
             self.moveboard(pointA, Direction.East, q)
             self.drawboard(200)
             self.moveboard(pointB, Direction.North, p)
@@ -104,7 +102,6 @@ class SlidingGame:
             self.drawboard(200)
 
         elif dir == "CCW":
-
             self.moveboard(pointB, Direction.North, p)
             self.drawboard(200)
             self.moveboard(pointA, Direction.East, q)
@@ -144,7 +141,7 @@ class SlidingGame:
             self.drawboard(200)
 
     def tw(self, pointA: Point, pointB: Point, pointC: Point, dir: str):
-        corner = [pointB[0]-1, pointB[1]]
+        corner = [pointB[0] - 1, pointB[1]]
         if dir == "W":
             self.rotationD(corner, pointA, pointB, "CW")
             self.rotationA(corner, pointB, pointC, "CW")
@@ -167,15 +164,15 @@ class SlidingGame:
         sys.exit()
 
     def solve(self):
-        for r in range(1, n*n+1-n, 1):
-            correctspot = [(r-1)//n, (r-1) % n]
+        for r in range(1, n * n + 1 - n, 1):
+            correctspot = [(r - 1) // n, (r - 1) % n]
             actualloc = self.board.where(r)
             if correctspot == actualloc:
                 continue
 
             elif actualloc[1] > correctspot[1]:
                 if actualloc[0] == correctspot[0]:
-                    corner = [actualloc[0]+1, actualloc[1]]
+                    corner = [actualloc[0] + 1, actualloc[1]]
                     self.rotationC(correctspot, actualloc, corner, "CCW")
                 elif actualloc[0] > correctspot[0]:
                     corner = [correctspot[0], actualloc[1]]
@@ -185,30 +182,30 @@ class SlidingGame:
                     corner = [actualloc[0], correctspot[1]]
                     self.rotationD(correctspot, actualloc, corner, "CW")
             elif actualloc[1] == correctspot[1]:
-                if actualloc[1] == n-1:
-                    corner = [actualloc[0], actualloc[1]-1]
+                if actualloc[1] == n - 1:
+                    corner = [actualloc[0], actualloc[1] - 1]
                     self.rotationD(correctspot, corner, actualloc, "CCW")
                 elif actualloc[1] >= 0:
-                    corner = [actualloc[0], actualloc[1]+1]
+                    corner = [actualloc[0], actualloc[1] + 1]
                     self.rotationA(correctspot, actualloc, corner, "CW")
 
-        for r in range(n*n-n+1, n*n-1, 1):
-            correctspot = [(r-1)//n, (r-1) % n]
+        for r in range(n * n - n + 1, n * n - 1, 1):
+            correctspot = [(r - 1) // n, (r - 1) % n]
             actualloc = self.board.where(r)
             if correctspot == actualloc:
                 continue
-            if actualloc[1] == correctspot[1]+1:
-                pointC = [correctspot[0], actualloc[1]+1]
+            if actualloc[1] == correctspot[1] + 1:
+                pointC = [correctspot[0], actualloc[1] + 1]
                 self.tw(correctspot, actualloc, pointC, "W")
             elif actualloc[1] - correctspot[1] > 1:
-                pointC = [correctspot[0], correctspot[1]+1]
+                pointC = [correctspot[0], correctspot[1] + 1]
                 self.tw(correctspot, pointC, actualloc, "E")
 
         self.checkwin()
         # swap last two pieces
-        for i in range(n-2, -2, -2):
-            self.tw([n-1, i-1], [n-1, i], [n-1, i+1], "E")
-        self.moveboard([n-1, 0], Direction.West, 1)
+        for i in range(n - 2, -2, -2):
+            self.tw([n - 1, i - 1], [n - 1, i], [n - 1, i + 1], "E")
+        self.moveboard([n - 1, 0], Direction.West, 1)
         self.drawboard(200)
         self.checkwin()
 
@@ -217,7 +214,7 @@ class SlidingGame:
         moved = False
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        self.font = pygame.font.SysFont('arial', 20)
+        self.font = pygame.font.SysFont("arial", 20)
 
         self.randomize()
         self.drawboard()
@@ -234,12 +231,18 @@ class SlidingGame:
                         print("solving")
                         self.solve()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    elemx, elemy = event.pos[0]//SQUARESIZE, event.pos[1]//SQUARESIZE
+                    elemx, elemy = (
+                        event.pos[0] // SQUARESIZE,
+                        event.pos[1] // SQUARESIZE,
+                    )
 
                 if event.type == pygame.MOUSEBUTTONUP:
-                    elem2x, elem2y = event.pos[0]//SQUARESIZE, event.pos[1]//SQUARESIZE
+                    elem2x, elem2y = (
+                        event.pos[0] // SQUARESIZE,
+                        event.pos[1] // SQUARESIZE,
+                    )
 
-                    deltax = elem2x-elemx
+                    deltax = elem2x - elemx
                     deltay = elem2y - elemy
 
                     if deltax > 0:
@@ -256,7 +259,6 @@ class SlidingGame:
                         amount = deltay
                     moved = deltax != 0 or deltay != 0
                 if moved:
-
                     elem = elemy, elemx
                     self.moveboard(elem, direc, amount)
                     moved = False
@@ -268,8 +270,7 @@ class SlidingGame:
         self.board.randomize()
 
     def checkwin(self):
-
-        solved = np.arange(1, n*n+1, 1)
+        solved = np.arange(1, n * n + 1, 1)
         solved.resize((n, n))
         if np.array_equal(solved, self.board.board):
             self.gameover()
@@ -278,13 +279,17 @@ class SlidingGame:
         self.screen.fill((0, 0, 0))
         for x in range(n):
             for y in range(n):
-                pygame.draw.rect(self.screen, (255, 255, 255),
-                                 [x*SQUARESIZE, y*SQUARESIZE, SQUARESIZE, SQUARESIZE],
-                                   3)
+                pygame.draw.rect(
+                    self.screen,
+                    (255, 255, 255),
+                    [x * SQUARESIZE, y * SQUARESIZE, SQUARESIZE, SQUARESIZE],
+                    3,
+                )
                 numtxt = str(self.board.board[y][x])
                 img = self.font.render(numtxt, True, (255, 255, 255))
-                posx, posy = int(x*SQUARESIZE + SQUARESIZE //
-                                 3), int(y*SQUARESIZE + SQUARESIZE//3)
+                posx, posy = int(x * SQUARESIZE + SQUARESIZE // 3), int(
+                    y * SQUARESIZE + SQUARESIZE // 3
+                )
                 self.screen.blit(img, (posx, posy))
         pygame.display.update()
         if delay > 0:
@@ -295,7 +300,7 @@ class SlidingGame:
 
 
 if __name__ == "__main__":
-    matrix = np.arange(1, n*n+1, 1)
+    matrix = np.arange(1, n * n + 1, 1)
     matrix.resize((n, n))
     game = SlidingGame(matrix)
     game.rungame()
