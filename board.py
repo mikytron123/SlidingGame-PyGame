@@ -26,6 +26,11 @@ Point = tuple[int, int]
 
 class Board:
     def __init__(self, board: np.ndarray):
+        """Initialize a board wrapper.
+
+        Args:
+            board: The NumPy array used as the puzzle state.
+        """
         self.board = board
 
     def rotationA(
@@ -35,6 +40,17 @@ class Board:
         pointC: Point,
         direction: RotationDirection,
     ):
+        """Rotate the cells around an A-shaped three-point configuration.
+
+        Args:
+            pointA: The first point of the configuration.
+            pointB: The center point of the configuration.
+            pointC: The third point of the configuration.
+            direction: The clockwise or counterclockwise rotation direction.
+
+        Returns:
+            The mutated NumPy board array.
+        """
         #  A
         #  |
         #  p
@@ -65,6 +81,14 @@ class Board:
         pointC: Point,
         direction: RotationDirection,
     ):
+        """Rotate the cells around a B-shaped three-point configuration.
+
+        Args:
+            pointA: The first point of the configuration.
+            pointB: The second point of the configuration.
+            pointC: The third point of the configuration.
+            direction: The clockwise or counterclockwise rotation direction.
+        """
         # A - q - B
         # |
         # p
@@ -92,6 +116,14 @@ class Board:
         pointC: Point,
         direction: RotationDirection,
     ):
+        """Rotate the cells around a C-shaped three-point configuration.
+
+        Args:
+            pointA: The first point of the configuration.
+            pointB: The second point of the configuration.
+            pointC: The third point of the configuration.
+            direction: The clockwise or counterclockwise rotation direction.
+        """
         # A - q - B
         #         |
         #         p
@@ -119,6 +151,14 @@ class Board:
         pointC: Point,
         direction: RotationDirection,
     ):
+        """Rotate the cells around a D-shaped three-point configuration.
+
+        Args:
+            pointA: The first point of the configuration.
+            pointB: The second point of the configuration.
+            pointC: The third point of the configuration.
+            direction: The clockwise or counterclockwise rotation direction.
+        """
         #       A
         #       |
         #       p
@@ -145,6 +185,14 @@ class Board:
         pointC: Point,
         direction: TwistDirection,
     ):
+        """Twist a corner using paired board rotations.
+
+        Args:
+            pointA: The first point of the twist configuration.
+            pointB: The center point of the twist configuration.
+            pointC: The third point of the twist configuration.
+            direction: The east or west twist direction.
+        """
         corner = (pointB[0] - 1, pointB[1])
         if direction == TwistDirection.West:
             self.rotationD(corner, pointA, pointB, RotationDirection.CW)
@@ -154,6 +202,7 @@ class Board:
             self.rotationD(corner, pointA, pointB, RotationDirection.CCW)
 
     def randomize(self):
+        """Apply random valid moves to scramble the board."""
         direcs = list(Direction)
         n = self.board.shape[0]
         for _ in range(100):
@@ -165,6 +214,13 @@ class Board:
             self.moveboard(elem, direc, amount)
 
     def moveboard(self, elem: Point, direc: Direction, amount: int):
+        """Move a row or column by a wrapped amount.
+
+        Args:
+            elem: The row and column of the line to move.
+            direc: The direction in which to move the line.
+            amount: The number of positions to move.
+        """
         x, y = elem
         amount = abs(amount)
         if direc == Direction.North:
@@ -177,5 +233,13 @@ class Board:
             self.board[x, :] = np.roll(self.board[x, :], amount)
 
     def where(self, n: int) -> Point:
+        """Find the row and column containing a value.
+
+        Args:
+            n: The board value to locate.
+
+        Returns:
+            The row and column containing the value.
+        """
         found = np.where(self.board == n)
         return (found[0][0], found[1][0])
