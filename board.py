@@ -1,6 +1,5 @@
 import random
 from enum import Enum
-from typing import List, Tuple
 
 import numpy as np
 
@@ -12,7 +11,7 @@ class Direction(Enum):
     South = "S"
 
 
-Point = Tuple[int, int]
+Point = tuple[int, int]
 
 
 class Board:
@@ -137,6 +136,6 @@ class Board:
         elif direc == Direction.East:
             self.board[x, :] = np.roll(self.board[x, :], amount)
 
-    def where(self, n: int) -> List[int]:
+    def where(self, n: int) -> list[int]:
         found = np.where(self.board == n)
         return [found[0][0], found[1][0]]

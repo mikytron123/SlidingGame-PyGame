@@ -1,5 +1,4 @@
 import sys
-from typing import Tuple
 
 import numpy as np
 import pygame
@@ -12,7 +11,7 @@ HEIGHT = SQUARESIZE * n
 WIDTH = SQUARESIZE * n
 
 
-Point = Tuple[int, int]
+Point = tuple[int, int]
 
 
 class SlidingGame:
@@ -226,10 +225,9 @@ class SlidingGame:
                     pygame.display.quit()
                     pygame.quit()
                     sys.exit()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_s:
-                        print("solving")
-                        self.solve()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
+                    print("solving")
+                    self.solve()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     elemx, elemy = (
                         event.pos[0] // SQUARESIZE,
@@ -287,8 +285,9 @@ class SlidingGame:
                 )
                 numtxt = str(self.board.board[y][x])
                 img = self.font.render(numtxt, True, (255, 255, 255))
-                posx, posy = int(x * SQUARESIZE + SQUARESIZE // 3), int(
-                    y * SQUARESIZE + SQUARESIZE // 3
+                posx, posy = (
+                    int(x * SQUARESIZE + SQUARESIZE // 3),
+                    int(y * SQUARESIZE + SQUARESIZE // 3),
                 )
                 self.screen.blit(img, (posx, posy))
         pygame.display.update()
