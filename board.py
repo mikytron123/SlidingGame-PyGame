@@ -11,6 +11,16 @@ class Direction(Enum):
     South = "S"
 
 
+class RotationDirection(Enum):
+    CW = "CW"
+    CCW = "CCW"
+
+
+class TwistDirection(Enum):
+    East = "E"
+    West = "W"
+
+
 Point = tuple[int, int]
 
 
@@ -18,7 +28,13 @@ class Board:
     def __init__(self, board: np.ndarray):
         self.board = board
 
-    def rotationA(self, pointA: Point, pointB: Point, pointC: Point, dir: str):
+    def rotationA(
+        self,
+        pointA: Point,
+        pointB: Point,
+        pointC: Point,
+        direction: RotationDirection,
+    ):
         #  A
         #  |
         #  p
@@ -28,13 +44,13 @@ class Board:
 
         q = pointC[1] - pointB[1]
         p = abs(pointB[0] - pointA[0])
-        if dir == "CW":
+        if direction == RotationDirection.CW:
             self.moveboard(pointB, Direction.West, q)
             self.moveboard(pointB, Direction.South, p)
             self.moveboard(pointB, Direction.East, q)
             self.moveboard(pointB, Direction.North, p)
 
-        elif dir == "CCW":
+        elif direction == RotationDirection.CCW:
             self.moveboard(pointB, Direction.South, p)
             self.moveboard(pointB, Direction.West, q)
             self.moveboard(pointB, Direction.North, p)
@@ -42,7 +58,13 @@ class Board:
 
         return self.board
 
-    def rotationB(self, pointA: Point, pointB: Point, pointC: Point, dir: str):
+    def rotationB(
+        self,
+        pointA: Point,
+        pointB: Point,
+        pointC: Point,
+        direction: RotationDirection,
+    ):
         # A - q - B
         # |
         # p
@@ -52,18 +74,24 @@ class Board:
 
         q = pointB[1] - pointA[1]
         p = abs(pointC[0] - pointA[0])
-        if dir == "CW":
+        if direction == RotationDirection.CW:
             self.moveboard(pointA, Direction.North, p)
             self.moveboard(pointA, Direction.West, q)
             self.moveboard(pointA, Direction.South, p)
             self.moveboard(pointA, Direction.East, q)
-        elif dir == "CCW":
+        elif direction == RotationDirection.CCW:
             self.moveboard(pointA, Direction.West, q)
             self.moveboard(pointA, Direction.North, p)
             self.moveboard(pointA, Direction.East, q)
             self.moveboard(pointA, Direction.South, p)
 
-    def rotationC(self, pointA: Point, pointB: Point, pointC: Point, dir: str):
+    def rotationC(
+        self,
+        pointA: Point,
+        pointB: Point,
+        pointC: Point,
+        direction: RotationDirection,
+    ):
         # A - q - B
         #         |
         #         p
@@ -73,18 +101,24 @@ class Board:
 
         q = pointB[1] - pointA[1]
         p = pointC[0] - pointB[0]
-        if dir == "CW":
+        if direction == RotationDirection.CW:
             self.moveboard(pointA, Direction.East, q)
             self.moveboard(pointB, Direction.North, p)
             self.moveboard(pointA, Direction.West, q)
             self.moveboard(pointB, Direction.South, p)
-        elif dir == "CCW":
+        elif direction == RotationDirection.CCW:
             self.moveboard(pointB, Direction.North, p)
             self.moveboard(pointA, Direction.East, q)
             self.moveboard(pointB, Direction.South, p)
             self.moveboard(pointA, Direction.West, q)
 
-    def rotationD(self, pointA: Point, pointB: Point, pointC: Point, dir: str):
+    def rotationD(
+        self,
+        pointA: Point,
+        pointB: Point,
+        pointC: Point,
+        direction: RotationDirection,
+    ):
         #       A
         #       |
         #       p
@@ -93,25 +127,31 @@ class Board:
 
         q = pointC[1] - pointB[1]
         p = pointB[0] - pointA[0]
-        if dir == "CW":
+        if direction == RotationDirection.CW:
             self.moveboard(pointA, Direction.South, p)
             self.moveboard(pointB, Direction.East, q)
             self.moveboard(pointA, Direction.North, p)
             self.moveboard(pointB, Direction.West, q)
-        elif dir == "CCW":
+        elif direction == RotationDirection.CCW:
             self.moveboard(pointB, Direction.East, q)
             self.moveboard(pointA, Direction.South, p)
             self.moveboard(pointB, Direction.West, q)
             self.moveboard(pointA, Direction.North, p)
 
-    def tw(self, pointA: Point, pointB: Point, pointC: Point, dir: str):
-        corner = [pointB[0] - 1, pointB[1]]
-        if dir == "W":
-            self.rotationD(corner, pointA, pointB, "CW")
-            self.rotationA(corner, pointB, pointC, "CW")
-        elif dir == "E":
-            self.rotationA(corner, pointB, pointC, "CCW")
-            self.rotationD(corner, pointA, pointB, "CCW")
+    def tw(
+        self,
+        pointA: Point,
+        pointB: Point,
+        pointC: Point,
+        direction: TwistDirection,
+    ):
+        corner = (pointB[0] - 1, pointB[1])
+        if direction == TwistDirection.West:
+            self.rotationD(corner, pointA, pointB, RotationDirection.CW)
+            self.rotationA(corner, pointB, pointC, RotationDirection.CW)
+        elif direction == TwistDirection.East:
+            self.rotationA(corner, pointB, pointC, RotationDirection.CCW)
+            self.rotationD(corner, pointA, pointB, RotationDirection.CCW)
 
     def randomize(self):
         direcs = list(Direction)
@@ -136,6 +176,6 @@ class Board:
         elif direc == Direction.East:
             self.board[x, :] = np.roll(self.board[x, :], amount)
 
-    def where(self, n: int) -> list[int]:
+    def where(self, n: int) -> Point:
         found = np.where(self.board == n)
-        return [found[0][0], found[1][0]]
+        return (found[0][0], found[1][0])

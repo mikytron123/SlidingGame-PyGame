@@ -3,7 +3,7 @@ import sys
 import numpy as np
 import pygame
 
-from board import Board, Direction
+from board import Board, Direction, RotationDirection, TwistDirection
 
 SQUARESIZE = 100
 n = int(input("Enter Grid Size:"))
@@ -18,7 +18,13 @@ class SlidingGame:
     def __init__(self, board: np.ndarray):
         self.board = Board(board)
 
-    def rotationA(self, pointA: Point, pointB: Point, pointC: Point, dir: str):
+    def rotationA(
+        self,
+        pointA: Point,
+        pointB: Point,
+        pointC: Point,
+        direction: RotationDirection,
+    ):
         #  A
         #  |
         #  p
@@ -28,7 +34,7 @@ class SlidingGame:
 
         q = pointC[1] - pointB[1]
         p = abs(pointB[0] - pointA[0])
-        if dir == "CW":
+        if direction == RotationDirection.CW:
             self.moveboard(pointB, Direction.West, q)
             self.drawboard(200)
             self.moveboard(pointB, Direction.South, p)
@@ -38,7 +44,7 @@ class SlidingGame:
             self.moveboard(pointB, Direction.North, p)
             self.drawboard(200)
 
-        elif dir == "CCW":
+        elif direction == RotationDirection.CCW:
             self.moveboard(pointB, Direction.South, p)
             self.drawboard(200)
             self.moveboard(pointB, Direction.West, q)
@@ -50,7 +56,13 @@ class SlidingGame:
 
         return self.board
 
-    def rotationB(self, pointA: Point, pointB: Point, pointC: Point, dir: str):
+    def rotationB(
+        self,
+        pointA: Point,
+        pointB: Point,
+        pointC: Point,
+        direction: RotationDirection,
+    ):
         # A - q - B
         # |
         # p
@@ -60,7 +72,7 @@ class SlidingGame:
 
         q = pointB[1] - pointA[1]
         p = abs(pointC[0] - pointA[0])
-        if dir == "CW":
+        if direction == RotationDirection.CW:
             self.moveboard(pointA, Direction.North, p)
             self.drawboard(200)
             self.moveboard(pointA, Direction.West, q)
@@ -70,7 +82,7 @@ class SlidingGame:
             self.moveboard(pointA, Direction.East, q)
             self.drawboard(200)
 
-        elif dir == "CCW":
+        elif direction == RotationDirection.CCW:
             self.moveboard(pointA, Direction.West, q)
             self.drawboard(200)
             self.moveboard(pointA, Direction.North, p)
@@ -80,7 +92,13 @@ class SlidingGame:
             self.moveboard(pointA, Direction.South, p)
             self.drawboard(200)
 
-    def rotationC(self, pointA: Point, pointB: Point, pointC: Point, dir: str):
+    def rotationC(
+        self,
+        pointA: Point,
+        pointB: Point,
+        pointC: Point,
+        direction: RotationDirection,
+    ):
         # A - q - B
         #         |
         #         p
@@ -90,7 +108,7 @@ class SlidingGame:
 
         q = pointB[1] - pointA[1]
         p = pointC[0] - pointB[0]
-        if dir == "CW":
+        if direction == RotationDirection.CW:
             self.moveboard(pointA, Direction.East, q)
             self.drawboard(200)
             self.moveboard(pointB, Direction.North, p)
@@ -100,7 +118,7 @@ class SlidingGame:
             self.moveboard(pointB, Direction.South, p)
             self.drawboard(200)
 
-        elif dir == "CCW":
+        elif direction == RotationDirection.CCW:
             self.moveboard(pointB, Direction.North, p)
             self.drawboard(200)
             self.moveboard(pointA, Direction.East, q)
@@ -110,7 +128,13 @@ class SlidingGame:
             self.moveboard(pointA, Direction.West, q)
             self.drawboard(200)
 
-    def rotationD(self, pointA: Point, pointB: Point, pointC: Point, dir: str):
+    def rotationD(
+        self,
+        pointA: Point,
+        pointB: Point,
+        pointC: Point,
+        direction: RotationDirection,
+    ):
         #       A
         #       |
         #       p
@@ -119,7 +143,7 @@ class SlidingGame:
 
         q = pointC[1] - pointB[1]
         p = pointB[0] - pointA[0]
-        if dir == "CW":
+        if direction == RotationDirection.CW:
             self.moveboard(pointA, Direction.South, p)
             self.drawboard(200)
             self.moveboard(pointB, Direction.East, q)
@@ -129,7 +153,7 @@ class SlidingGame:
             self.moveboard(pointB, Direction.West, q)
             self.drawboard(200)
 
-        elif dir == "CCW":
+        elif direction == RotationDirection.CCW:
             self.moveboard(pointB, Direction.East, q)
             self.drawboard(200)
             self.moveboard(pointA, Direction.South, p)
@@ -139,14 +163,20 @@ class SlidingGame:
             self.moveboard(pointA, Direction.North, p)
             self.drawboard(200)
 
-    def tw(self, pointA: Point, pointB: Point, pointC: Point, dir: str):
-        corner = [pointB[0] - 1, pointB[1]]
-        if dir == "W":
-            self.rotationD(corner, pointA, pointB, "CW")
-            self.rotationA(corner, pointB, pointC, "CW")
-        elif dir == "E":
-            self.rotationA(corner, pointB, pointC, "CCW")
-            self.rotationD(corner, pointA, pointB, "CCW")
+    def tw(
+        self,
+        pointA: Point,
+        pointB: Point,
+        pointC: Point,
+        direction: TwistDirection,
+    ):
+        corner = (pointB[0] - 1, pointB[1])
+        if direction == TwistDirection.West:
+            self.rotationD(corner, pointA, pointB, RotationDirection.CW)
+            self.rotationA(corner, pointB, pointC, RotationDirection.CW)
+        elif direction == TwistDirection.East:
+            self.rotationA(corner, pointB, pointC, RotationDirection.CCW)
+            self.rotationD(corner, pointA, pointB, RotationDirection.CCW)
 
     def gameover(self):
         # If game over is true, draw game over
@@ -164,47 +194,54 @@ class SlidingGame:
 
     def solve(self):
         for r in range(1, n * n + 1 - n, 1):
-            correctspot = [(r - 1) // n, (r - 1) % n]
+            correctspot = ((r - 1) // n, (r - 1) % n)
             actualloc = self.board.where(r)
             if correctspot == actualloc:
                 continue
 
             elif actualloc[1] > correctspot[1]:
                 if actualloc[0] == correctspot[0]:
-                    corner = [actualloc[0] + 1, actualloc[1]]
-                    self.rotationC(correctspot, actualloc, corner, "CCW")
+                    corner = (actualloc[0] + 1, actualloc[1])
+                    self.rotationC(
+                        correctspot, actualloc, corner, RotationDirection.CCW
+                    )
                 elif actualloc[0] > correctspot[0]:
-                    corner = [correctspot[0], actualloc[1]]
-                    self.rotationC(correctspot, corner, actualloc, "CW")
+                    corner = (correctspot[0], actualloc[1])
+                    self.rotationC(correctspot, corner, actualloc, RotationDirection.CW)
             elif actualloc[1] < correctspot[1]:
                 if actualloc[0] > correctspot[0]:
-                    corner = [actualloc[0], correctspot[1]]
-                    self.rotationD(correctspot, actualloc, corner, "CW")
+                    corner = (actualloc[0], correctspot[1])
+                    self.rotationD(correctspot, actualloc, corner, RotationDirection.CW)
             elif actualloc[1] == correctspot[1]:
                 if actualloc[1] == n - 1:
-                    corner = [actualloc[0], actualloc[1] - 1]
-                    self.rotationD(correctspot, corner, actualloc, "CCW")
+                    corner = (actualloc[0], actualloc[1] - 1)
+                    self.rotationD(correctspot, corner, actualloc, RotationDirection.CCW)
                 elif actualloc[1] >= 0:
-                    corner = [actualloc[0], actualloc[1] + 1]
-                    self.rotationA(correctspot, actualloc, corner, "CW")
+                    corner = (actualloc[0], actualloc[1] + 1)
+                    self.rotationA(correctspot, actualloc, corner, RotationDirection.CW)
 
         for r in range(n * n - n + 1, n * n - 1, 1):
-            correctspot = [(r - 1) // n, (r - 1) % n]
+            correctspot = ((r - 1) // n, (r - 1) % n)
             actualloc = self.board.where(r)
             if correctspot == actualloc:
                 continue
             if actualloc[1] == correctspot[1] + 1:
-                pointC = [correctspot[0], actualloc[1] + 1]
-                self.tw(correctspot, actualloc, pointC, "W")
+                pointC = (correctspot[0], actualloc[1] + 1)
+                self.tw(correctspot, actualloc, pointC, TwistDirection.West)
             elif actualloc[1] - correctspot[1] > 1:
-                pointC = [correctspot[0], correctspot[1] + 1]
-                self.tw(correctspot, pointC, actualloc, "E")
+                pointC = (correctspot[0], correctspot[1] + 1)
+                self.tw(correctspot, pointC, actualloc, TwistDirection.East)
 
         self.checkwin()
         # swap last two pieces
         for i in range(n - 2, -2, -2):
-            self.tw([n - 1, i - 1], [n - 1, i], [n - 1, i + 1], "E")
-        self.moveboard([n - 1, 0], Direction.West, 1)
+            self.tw(
+                (n - 1, i - 1),
+                (n - 1, i),
+                (n - 1, i + 1),
+                TwistDirection.East,
+            )
+        self.moveboard((n - 1, 0), Direction.West, 1)
         self.drawboard(200)
         self.checkwin()
 
@@ -220,6 +257,10 @@ class SlidingGame:
 
         while running:
             for event in pygame.event.get():
+                elemx = 0
+                elemy = 0
+                amount = 0
+                direc = Direction.North
                 if event.type == pygame.QUIT:
                     running = False
                     pygame.display.quit()
